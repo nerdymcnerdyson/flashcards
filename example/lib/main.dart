@@ -33,14 +33,15 @@ class FlashcardWelcomeScreen extends StatefulWidget {
 }
 
 class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
-  // Define our repository interface. We can swap this implementation easily!
+  // Define our repository interface, scoped to the current user!
   //
   // To use Firestore, simply instantiate:
   // final FlashcardRepository repository = FirestoreFlashcardRepository(
+  //   userId: 'current_user_123', // Scopes all reads/writes to this user doc
   //   firestore: FirebaseFirestore.instance, // Needs Firebase.initializeApp() first
-  //   collectionPath: 'flashcards',
+  //   cardsCollectionPath: 'flashcards',
   // );
-  final FlashcardRepository repository = MockFlashcardRepository();
+  final FlashcardRepository repository = MockFlashcardRepository(userId: 'user_1');
 
   @override
   Widget build(BuildContext context) {

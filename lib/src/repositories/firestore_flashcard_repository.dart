@@ -1,42 +1,84 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 import '../models/flashcard.dart';
 import 'flashcard_repository.dart';
 
 class FirestoreFlashcardRepository implements FlashcardRepository {
   final FirebaseFirestore _firestore;
-  final String collectionPath;
+  final String userId;
+  final String cardsCollectionPath;
 
   FirestoreFlashcardRepository({
+    required this.userId,
     FirebaseFirestore? firestore,
-    this.collectionPath = 'flashcards',
+    this.cardsCollectionPath = 'flashcards',
   }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Stream<List<Flashcard>> getFlashcards() {
-    return _firestore.collection(collectionPath).snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return Flashcard.fromMap(doc.data(), doc.id);
-      }).toList();
-    });
+    final cardsSnapshots = _firestore.collection(cardsCollectionPath).snapshots();
+    final statsSnapshots = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('flashcard_stats')
+        .snapshots();
+
+    return Rx.combineLatest2<
+        QuerySnapshot<Map<String, dynamic>>,
+        QuerySnapshot<Map<String, dynamic>>,
+        List<Flashcard>>(
+      cardsSnapshots,
+      statsSnapshots,
+      (cardsSnap, statsSnap) {
+        final statsMap = {
+          for (var doc in statsSnap.docs) doc.id: doc.data()
+        };
+
+        return cardsSnap.docs.map((doc) {
+          final cardData = doc.data();
+          final cardId = doc.id;
+          final stats = statsMap[cardId];
+
+          final correctCount = stats?['correctCount'] as int? ?? 0;
+          final totalCount = stats?['totalCount'] as int? ?? 0;
+
+          return Flashcard.fromMap({
+            ...cardData,
+            'correctCount': correctCount,
+            'totalCount': totalCount,
+          }, cardId);
+        }).toList();
+      },
+    );
   }
 
   @override
   Future<void> updateFlashcardStats(String cardId, {required bool isCorrect}) {
-    final docRef = _firestore.collection(collectionPath).doc(cardId);
+    final docRef = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('flashcard_stats')
+        .doc(cardId);
+
     return _firestore.runTransaction((transaction) async {
       final snapshot = await transaction.get(docRef);
-      if (!snapshot.exists) {
-        throw Exception("Flashcard with ID $cardId does not exist in Firestore.");
+      int currentCorrect = 0;
+      int currentTotal = 0;
+
+      if (snapshot.exists) {
+        final data = snapshot.data() ?? {};
+        currentCorrect = data['correctCount'] as int? ?? 0;
+        currentTotal = data['totalCount'] as int? ?? 0;
       }
 
-      final data = snapshot.data() ?? {};
-      final currentCorrect = data['correctCount'] as int? ?? 0;
-      final currentTotal = data['totalCount'] as int? ?? 0;
-
-      transaction.update(docRef, {
-        'correctCount': currentCorrect + (isCorrect ? 1 : 0),
-        'totalCount': currentTotal + 1,
-      });
+      transaction.set(
+        docRef,
+        {
+          'correctCount': currentCorrect + (isCorrect ? 1 : 0),
+          'totalCount': currentTotal + 1,
+        },
+        SetOptions(merge: true),
+      );
     });
   }
 }
