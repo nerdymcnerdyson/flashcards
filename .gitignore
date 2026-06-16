@@ -1,0 +1,85 @@
+# Standard Flutter Gitignore
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code related
+.vscode/
+
+# Flutter/Dart/Pub related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Since this is a Dart library package, exclude the root pubspec.lock
+/pubspec.lock
+
+# Android related
+**/android/.gradle/
+**/android/captures/
+**/android/local.properties
+**/android/key.properties
+**/android/app/src/main/res/values/google-services.json
+**/android/.cxx/
+*.apk
+*.ap_
+*.dex
+
+# iOS/macOS related
+**/ios/Flutter/.flutter-plugins
+**/ios/Flutter/.flutter-plugins-dependencies
+**/ios/Flutter/GeneratedPluginRegistrant.h
+**/ios/Flutter/GeneratedPluginRegistrant.m
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Flutter.podspec
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Runner/GeneratedPluginRegistrant.h
+**/ios/Runner/GeneratedPluginRegistrant.m
+**/ios/Runner/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+**/ios/.xcworkspace
+**/ios/.xcodeproj
+**/*.xcuserstate
+**/*.xcworkspace
+**/*.xcodeproj
+DerivedData/
+*.ipa
+
+# Windows related
+**/windows/flutter/ephemeral/
+**/windows/flutter/GeneratedPluginRegistrant.h
+**/windows/flutter/GeneratedPluginRegistrant.cc
+**/windows/CMakeSettings.json
+
+# Linux related
+**/linux/flutter/ephemeral/
+**/linux/flutter/GeneratedPluginRegistrant.h
+**/linux/flutter/GeneratedPluginRegistrant.cc
+
+# Local environment / API Keys
+.env
+.env.*
