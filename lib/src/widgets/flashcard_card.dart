@@ -166,7 +166,7 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
         // Image section if present
         if (widget.flashcard.imageUrl != null)
           Expanded(
-            flex: 4,
+            flex: _showMultipleChoice ? 2 : 4,
             child: Container(
               decoration: const BoxDecoration(
                 border: Border(
@@ -203,7 +203,7 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
 
         // Question details
         Expanded(
-          flex: widget.flashcard.imageUrl != null ? 5 : 9,
+          flex: widget.flashcard.imageUrl != null ? (_showMultipleChoice ? 7 : 5) : 9,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Column(
@@ -248,13 +248,13 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
                         }
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          padding: const EdgeInsets.symmetric(vertical: 3.0),
                           child: InkWell(
                             onTap: () => _handleOptionSelect(option),
                             borderRadius: BorderRadius.circular(12),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                               decoration: BoxDecoration(
                                 color: buttonColor,
                                 borderRadius: BorderRadius.circular(12),
