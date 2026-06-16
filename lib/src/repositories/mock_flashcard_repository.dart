@@ -5,7 +5,19 @@ import 'flashcard_repository.dart';
 class _MockStats {
   final int correctCount;
   final int totalCount;
-  const _MockStats(this.correctCount, this.totalCount);
+  final double easinessFactor;
+  final int repetitions;
+  final int intervalDays;
+  final DateTime? nextReviewAt;
+
+  const _MockStats({
+    required this.correctCount,
+    required this.totalCount,
+    this.easinessFactor = 2.5,
+    this.repetitions = 0,
+    this.intervalDays = 0,
+    this.nextReviewAt,
+  });
 }
 
 class MockFlashcardRepository implements FlashcardRepository {
@@ -46,16 +58,52 @@ class MockFlashcardRepository implements FlashcardRepository {
     ),
   ];
 
-  // In-memory stats database: Map<userId, Map<cardId, _MockStats>>
+  // Static in-memory database of stats (Map<userId, Map<cardId, _MockStats>>)
   static final Map<String, Map<String, _MockStats>> _statsDb = {
     'user_1': {
-      '1': const _MockStats(4, 5),
-      '2': const _MockStats(2, 3),
-      '3': const _MockStats(8, 10),
+      '1': _MockStats(
+        correctCount: 4,
+        totalCount: 5,
+        easinessFactor: 2.6,
+        repetitions: 3,
+        intervalDays: 6,
+        nextReviewAt: DateTime.now().subtract(const Duration(days: 2)), // Overdue card
+      ),
+      '2': _MockStats(
+        correctCount: 2,
+        totalCount: 3,
+        easinessFactor: 2.3,
+        repetitions: 1,
+        intervalDays: 1,
+        nextReviewAt: DateTime.now().add(const Duration(days: 1)), // Due tomorrow
+      ),
+      '3': _MockStats(
+        correctCount: 8,
+        totalCount: 10,
+        easinessFactor: 2.8,
+        repetitions: 5,
+        intervalDays: 18,
+        nextReviewAt: DateTime.now().add(const Duration(days: 5)), // Due in 5 days
+      ),
+      // Card '4' is not in user_1 stats: Treated as a "New" card (overdue)
     },
     'user_2': {
-      '1': const _MockStats(1, 5),
-      '2': const _MockStats(3, 3),
+      '1': _MockStats(
+        correctCount: 1,
+        totalCount: 5,
+        easinessFactor: 1.7,
+        repetitions: 0,
+        intervalDays: 1,
+        nextReviewAt: DateTime.now().subtract(const Duration(hours: 12)), // Overdue card
+      ),
+      '2': _MockStats(
+        correctCount: 3,
+        totalCount: 3,
+        easinessFactor: 2.5,
+        repetitions: 3,
+        intervalDays: 6,
+        nextReviewAt: DateTime.now().add(const Duration(days: 6)),
+      ),
     }
   };
 
@@ -74,6 +122,10 @@ class MockFlashcardRepository implements FlashcardRepository {
       return card.copyWith(
         correctCount: stats?.correctCount ?? 0,
         totalCount: stats?.totalCount ?? 0,
+        easinessFactor: stats?.easinessFactor ?? 2.5,
+        repetitions: stats?.repetitions ?? 0,
+        intervalDays: stats?.intervalDays ?? 0,
+        nextReviewAt: stats?.nextReviewAt,
       );
     }).toList();
   }
@@ -92,11 +144,37 @@ class MockFlashcardRepository implements FlashcardRepository {
   @override
   Future<void> updateFlashcardStats(String cardId, {required bool isCorrect}) async {
     final userStats = _statsDb.putIfAbsent(userId, () => {});
-    final oldStats = userStats[cardId] ?? const _MockStats(0, 0);
+    final oldStats = userStats[cardId] ?? const _MockStats(correctCount: 0, totalCount: 0);
+
+    double newEF = oldStats.easinessFactor;
+    int newRepetitions = oldStats.repetitions;
+    int newInterval = oldStats.intervalDays;
+
+    if (isCorrect) {
+      if (newRepetitions == 0) {
+        newInterval = 1;
+      } else if (newRepetitions == 1) {
+        newInterval = 6;
+      } else {
+        newInterval = (newInterval * newEF).round();
+      }
+      newRepetitions += 1;
+      newEF = double.parse((newEF + 0.1).clamp(1.3, 3.0).toStringAsFixed(1));
+    } else {
+      newRepetitions = 0;
+      newInterval = 1;
+      newEF = double.parse((newEF - 0.2).clamp(1.3, 3.0).toStringAsFixed(1));
+    }
+
+    final newReviewDate = DateTime.now().add(Duration(days: newInterval));
 
     userStats[cardId] = _MockStats(
-      oldStats.correctCount + (isCorrect ? 1 : 0),
-      oldStats.totalCount + 1,
+      correctCount: oldStats.correctCount + (isCorrect ? 1 : 0),
+      totalCount: oldStats.totalCount + 1,
+      easinessFactor: newEF,
+      repetitions: newRepetitions,
+      intervalDays: newInterval,
+      nextReviewAt: newReviewDate,
     );
 
     _emitMergedCards();

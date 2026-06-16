@@ -96,7 +96,20 @@ class _FlashcardDeckScreenState extends State<FlashcardDeckScreen> {
             );
           }
 
-          final cards = snapshot.data ?? [];
+          final rawCards = snapshot.data ?? [];
+          final cards = List<Flashcard>.from(rawCards)..sort((a, b) {
+            final now = DateTime.now();
+            final aDue = a.nextReviewAt == null || a.nextReviewAt!.isBefore(now);
+            final bDue = b.nextReviewAt == null || b.nextReviewAt!.isBefore(now);
+
+            if (aDue && !bDue) return -1;
+            if (!aDue && bDue) return 1;
+
+            if (a.nextReviewAt == null && b.nextReviewAt != null) return -1;
+            if (a.nextReviewAt != null && b.nextReviewAt == null) return 1;
+            if (a.nextReviewAt == null && b.nextReviewAt == null) return 0;
+            return a.nextReviewAt!.compareTo(b.nextReviewAt!);
+          });
 
           if (cards.isEmpty) {
             return const Center(

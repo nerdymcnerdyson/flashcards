@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Flashcard {
   final String id;
   final String question;
@@ -8,6 +10,12 @@ class Flashcard {
   final int correctCount;
   final int totalCount;
 
+  // Spaced Repetition (SM-2) variables
+  final double easinessFactor;
+  final int repetitions;
+  final int intervalDays;
+  final DateTime? nextReviewAt;
+
   const Flashcard({
     required this.id,
     required this.question,
@@ -17,6 +25,10 @@ class Flashcard {
     this.multipleChoiceOptions = const [],
     this.correctCount = 0,
     this.totalCount = 0,
+    this.easinessFactor = 2.5,
+    this.repetitions = 0,
+    this.intervalDays = 0,
+    this.nextReviewAt,
   });
 
   /// Calculates the accuracy as a value between 0.0 and 1.0.
@@ -35,6 +47,10 @@ class Flashcard {
     List<String>? multipleChoiceOptions,
     int? correctCount,
     int? totalCount,
+    double? easinessFactor,
+    int? repetitions,
+    int? intervalDays,
+    DateTime? nextReviewAt,
   }) {
     return Flashcard(
       id: id ?? this.id,
@@ -45,6 +61,10 @@ class Flashcard {
       multipleChoiceOptions: multipleChoiceOptions ?? this.multipleChoiceOptions,
       correctCount: correctCount ?? this.correctCount,
       totalCount: totalCount ?? this.totalCount,
+      easinessFactor: easinessFactor ?? this.easinessFactor,
+      repetitions: repetitions ?? this.repetitions,
+      intervalDays: intervalDays ?? this.intervalDays,
+      nextReviewAt: nextReviewAt ?? this.nextReviewAt,
     );
   }
 
@@ -58,10 +78,22 @@ class Flashcard {
       'multipleChoiceOptions': multipleChoiceOptions,
       'correctCount': correctCount,
       'totalCount': totalCount,
+      'easinessFactor': easinessFactor,
+      'repetitions': repetitions,
+      'intervalDays': intervalDays,
+      'nextReviewAt': nextReviewAt != null ? Timestamp.fromDate(nextReviewAt!) : null,
     };
   }
 
   factory Flashcard.fromMap(Map<String, dynamic> map, String documentId) {
+    DateTime? parseNextReviewAt(dynamic val) {
+      if (val == null) return null;
+      if (val is Timestamp) return val.toDate();
+      if (val is String) return DateTime.tryParse(val);
+      if (val is int) return DateTime.fromMillisecondsSinceEpoch(val);
+      return null;
+    }
+
     return Flashcard(
       id: documentId,
       question: map['question'] as String? ?? '',
@@ -71,6 +103,10 @@ class Flashcard {
       multipleChoiceOptions: List<String>.from(map['multipleChoiceOptions'] ?? const []),
       correctCount: map['correctCount'] as int? ?? 0,
       totalCount: map['totalCount'] as int? ?? 0,
+      easinessFactor: (map['easinessFactor'] as num?)?.toDouble() ?? 2.5,
+      repetitions: map['repetitions'] as int? ?? 0,
+      intervalDays: map['intervalDays'] as int? ?? 0,
+      nextReviewAt: parseNextReviewAt(map['nextReviewAt']),
     );
   }
 }
