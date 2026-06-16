@@ -167,24 +167,31 @@ class _FlashcardDeckScreenState extends State<FlashcardDeckScreen> {
                       const SizedBox(height: 10),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 6,
-                              color: const Color(0xFF221A30),
-                            ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              height: 6,
-                              width: MediaQuery.of(context).size.width * progress - 48,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFF9E7EFE), Color(0xFFD06BFA)],
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final totalWidth = constraints.maxWidth;
+                            final barWidth = totalWidth * progress;
+
+                            return Stack(
+                              children: [
+                                Container(
+                                  height: 6,
+                                  color: const Color(0xFF221A30),
                                 ),
-                              ),
-                            ),
-                          ],
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: 6,
+                                  width: barWidth,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: const LinearGradient(
+                                      colors: [Color(0xFF9E7EFE), Color(0xFFD06BFA)],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -195,6 +202,7 @@ class _FlashcardDeckScreenState extends State<FlashcardDeckScreen> {
                 Expanded(
                   child: PageView.builder(
                     controller: _pageController,
+                    physics: const BouncingScrollPhysics(),
                     itemCount: cards.length,
                     onPageChanged: (index) {
                       setState(() {
