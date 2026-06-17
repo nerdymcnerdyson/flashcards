@@ -25,6 +25,7 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
   bool _showMultipleChoice = false;
   String? _selectedOption;
   bool _answeredViaChoice = false;
+  List<String> _shuffledOptions = [];
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
     _flipAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _flipController, curve: Curves.easeInOutBack),
     );
+    _shuffledOptions = List<String>.from(widget.flashcard.multipleChoiceOptions)..shuffle();
   }
 
   @override
@@ -44,6 +46,7 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
     // Reset card state if the flashcard changes
     if (widget.flashcard.id != oldWidget.flashcard.id) {
       _resetCard();
+      _shuffledOptions = List<String>.from(widget.flashcard.multipleChoiceOptions)..shuffle();
     }
   }
 
@@ -223,11 +226,11 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
                 const Spacer(),
 
                 // Display Multiple Choice Hint if revealed
-                if (_showMultipleChoice && widget.flashcard.multipleChoiceOptions.isNotEmpty)
+                if (_showMultipleChoice && _shuffledOptions.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
                     child: Column(
-                      children: widget.flashcard.multipleChoiceOptions.map((option) {
+                      children: _shuffledOptions.map((option) {
                         final isSelected = _selectedOption == option;
                         final isCorrectOption = option.toLowerCase() == widget.flashcard.answer.toLowerCase();
 
@@ -281,7 +284,7 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
                       }).toList(),
                     ),
                   )
-                else if (widget.flashcard.multipleChoiceOptions.isNotEmpty) ...[
+                else if (_shuffledOptions.isNotEmpty) ...[
                   // Show Hint Button
                   TextButton.icon(
                     onPressed: () {
