@@ -11,12 +11,12 @@ class FlashcardsExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flashcard Studio Example',
+      title: 'Aquarium Academy',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0F0C1B),
+        scaffoldBackgroundColor: const Color(0xFF020912),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF9E7EFE),
+          seedColor: const Color(0xFF00E5FF),
           brightness: Brightness.dark,
         ),
       ),
@@ -52,8 +52,8 @@ class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF1B1826),
-              Color(0xFF0F0C1B),
+              Color(0xFF0A1E3F),
+              Color(0xFF020912),
             ],
           ),
         ),
@@ -67,29 +67,29 @@ class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF28203D),
+                    color: const Color(0xFF0C2540),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color(0xFF9E7EFE).withOpacity(0.3),
+                      color: const Color(0xFF00E5FF).withOpacity(0.3),
                       width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF9E7EFE).withOpacity(0.2),
+                        color: const Color(0xFF00E5FF).withOpacity(0.2),
                         blurRadius: 24,
                         spreadRadius: 4,
                       ),
                     ],
                   ),
                   child: const Icon(
-                    Icons.style_rounded,
-                    color: Color(0xFFB392FF),
+                    Icons.waves_rounded,
+                    color: Color(0xFF00E5FF),
                     size: 64,
                   ),
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'Flashcard Studio',
+                  'Aquarium Academy',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32,
@@ -99,10 +99,10 @@ class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'A clean, modular flashcard module with support for image questions, multiple-choice hints, and progress tracking statistics.',
+                  'Review aquarium animals and facts. Test your knowledge on Monterey Bay Aquarium Aviary birds, identification markings, and behaviors.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withOpacity(0.7),
                     fontSize: 15,
                     height: 1.5,
                   ),
@@ -119,16 +119,16 @@ class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
                         MaterialPageRoute(
                           builder: (context) => FlashcardDeckScreen(
                             repository: repository,
-                            title: 'Vocabulary & Flutter Quiz',
+                            title: 'Monterey Bay Aviary Shorebirds',
                           ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF9E7EFE),
+                      backgroundColor: const Color(0xFF00B4D8),
                       foregroundColor: Colors.white,
                       elevation: 4,
-                      shadowColor: const Color(0xFF9E7EFE).withOpacity(0.4),
+                      shadowColor: const Color(0xFF00B4D8).withOpacity(0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -137,7 +137,7 @@ class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Start Studying',
+                          'Review Animals & Facts',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -155,21 +155,21 @@ class _FlashcardWelcomeScreenState extends State<FlashcardWelcomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1B1826).withOpacity(0.5),
+                    color: const Color(0xFF0C2540).withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF5A4C7A).withOpacity(0.2),
+                      color: const Color(0xFF00B4D8).withOpacity(0.2),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.info_outline_rounded, color: Color(0xFFB392FF), size: 20),
+                      const Icon(Icons.info_outline_rounded, color: Color(0xFF00E5FF), size: 20),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Note: Running in standalone mode using in-memory mock repository. Easily swap to FirestoreFlashcardRepository in main.dart.',
+                          'Note: Running in standalone mode using local mock data. Easily swap to FirestoreFlashcardRepository in main.dart.',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withOpacity(0.5),
                             fontSize: 11,
                             height: 1.3,
                           ),
