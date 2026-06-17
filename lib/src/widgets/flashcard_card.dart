@@ -328,52 +328,112 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.lightbulb_rounded,
-            color: Color(0xFFFFD54F),
-            size: 48,
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 12),
+                  const Icon(
+                    Icons.lightbulb_rounded,
+                    color: Color(0xFFFFD54F),
+                    size: 44,
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'ANSWER',
+                    style: TextStyle(
+                      color: Color(0xFFB392FF),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    widget.flashcard.answer,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  
+                  // Identification Notes Section
+                  if (widget.flashcard.notes != null && widget.flashcard.notes!.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF28203D).withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(0xFF9E7EFE).withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.remove_red_eye_rounded,
+                                color: Color(0xFFB392FF),
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'WHAT TO LOOK FOR',
+                                style: TextStyle(
+                                  color: const Color(0xFFB392FF).withOpacity(0.9),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.flashcard.notes!,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.85),
+                              fontSize: 13,
+                              height: 1.45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 20),
+                  // Statistics Display
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1730),
+                      borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: const Color(0xFF5A4C7A).withOpacity(0.2)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatColumn('Times Asked', '${widget.flashcard.totalCount}'),
+                        _buildStatColumn('Accuracy', widget.flashcard.accuracyPercentageString),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'ANSWER',
-            style: TextStyle(
-              color: Color(0xFFB392FF),
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2.0,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.flashcard.answer,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // Statistics Display
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E1730),
-              borderRadius: BorderRadius.circular(16.0),
-              border: Border.all(color: const Color(0xFF5A4C7A).withOpacity(0.2)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatColumn('Times Asked', '${widget.flashcard.totalCount}'),
-                _buildStatColumn('Accuracy', widget.flashcard.accuracyPercentageString),
-              ],
-            ),
-          ),
-          const Spacer(),
 
           // Manual controls if not answered via Multiple Choice
           if (!_answeredViaChoice) ...[
@@ -381,10 +441,10 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
               'Did you get it right?',
               style: TextStyle(
                 color: Colors.white70,
-                fontSize: 14,
+                fontSize: 13,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -422,15 +482,18 @@ class _FlashcardCardState extends State<FlashcardCard> with SingleTickerProvider
             ),
           ] else ...[
             // Finished feedback
-            ElevatedButton.icon(
-              onPressed: _toggleFlip,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Back to Question'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5A4C7A),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _toggleFlip,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Back to Question'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5A4C7A),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
               ),
             ),
           ],

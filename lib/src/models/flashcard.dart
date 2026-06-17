@@ -5,6 +5,7 @@ class Flashcard {
   final String question;
   final String answer;
   final String? imageUrl;
+  final String? notes;
   final List<String> hints;
   final List<String> multipleChoiceOptions;
   final int correctCount;
@@ -21,6 +22,7 @@ class Flashcard {
     required this.question,
     required this.answer,
     this.imageUrl,
+    this.notes,
     this.hints = const [],
     this.multipleChoiceOptions = const [],
     this.correctCount = 0,
@@ -43,6 +45,7 @@ class Flashcard {
     String? question,
     String? answer,
     String? imageUrl,
+    String? notes,
     List<String>? hints,
     List<String>? multipleChoiceOptions,
     int? correctCount,
@@ -57,6 +60,7 @@ class Flashcard {
       question: question ?? this.question,
       answer: answer ?? this.answer,
       imageUrl: imageUrl ?? this.imageUrl,
+      notes: notes ?? this.notes,
       hints: hints ?? this.hints,
       multipleChoiceOptions: multipleChoiceOptions ?? this.multipleChoiceOptions,
       correctCount: correctCount ?? this.correctCount,
@@ -74,6 +78,7 @@ class Flashcard {
       'question': question,
       'answer': answer,
       'imageUrl': imageUrl,
+      'notes': notes,
       'hints': hints,
       'multipleChoiceOptions': multipleChoiceOptions,
       'correctCount': correctCount,
@@ -99,6 +104,7 @@ class Flashcard {
       question: map['question'] as String? ?? '',
       answer: map['answer'] as String? ?? '',
       imageUrl: map['imageUrl'] as String?,
+      notes: map['notes'] as String?,
       hints: List<String>.from(map['hints'] ?? const []),
       multipleChoiceOptions: List<String>.from(map['multipleChoiceOptions'] ?? const []),
       correctCount: map['correctCount'] as int? ?? 0,
